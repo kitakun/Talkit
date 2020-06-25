@@ -22,46 +22,85 @@ var allowableConnections = [
     ['dialogue.Text', 'dialogue.GetRandom'],
     ['dialogue.Text', 'dialogue.Choice'],
     ['dialogue.Text', 'dialogue.Set'],
+    ['dialogue.Text', 'dialogue.Condition'],
     ['dialogue.Text', 'dialogue.Call'],
     ['dialogue.Text', 'dialogue.Branch'],
+    ['dialogue.Text', 'dialogue.End'],
+    // Node
     ['dialogue.Node', 'dialogue.Text'],
     ['dialogue.Node', 'dialogue.Node'],
     ['dialogue.Node', 'dialogue.Choice'],
     ['dialogue.Node', 'dialogue.Set'],
+    ['dialogue.Node', 'dialogue.Condition'],
     ['dialogue.Node', 'dialogue.Call'],
     ['dialogue.Node', 'dialogue.Branch'],
     ['dialogue.Node', 'dialogue.GetRandom'],
-    //
+    ['dialogue.Node', 'dialogue.End'],
+    // GetRandom
     ['dialogue.GetRandom', 'dialogue.Text'],
     ['dialogue.GetRandom', 'dialogue.GetRandom'],
     ['dialogue.GetRandom', 'dialogue.Choice'],
     ['dialogue.GetRandom', 'dialogue.Set'],
+    ['dialogue.GetRandom', 'dialogue.Condition'],
     ['dialogue.GetRandom', 'dialogue.Call'],
     ['dialogue.GetRandom', 'dialogue.Branch'],
+    ['dialogue.GetRandom', 'dialogue.End'],
+    // Choice
     ['dialogue.Choice', 'dialogue.Text'],
     ['dialogue.Choice', 'dialogue.Node'],
     ['dialogue.Choice', 'dialogue.GetRandom'],
     ['dialogue.Choice', 'dialogue.Set'],
+    ['dialogue.Choice', 'dialogue.Condition'],
     ['dialogue.Choice', 'dialogue.Call'],
     ['dialogue.Choice', 'dialogue.Branch'],
+    ['dialogue.Choice', 'dialogue.End'],
+    // Set
     ['dialogue.Set', 'dialogue.Text'],
     ['dialogue.Set', 'dialogue.Node'],
     ['dialogue.Set', 'dialogue.GetRandom'],
     ['dialogue.Set', 'dialogue.Set'],
     ['dialogue.Set', 'dialogue.Call'],
     ['dialogue.Set', 'dialogue.Branch'],
+    ['dialogue.Set', 'dialogue.Condition'],
+    ['dialogue.Set', 'dialogue.End'],
+    // Condition
+    ['dialogue.Condition', 'dialogue.Text'],
+    ['dialogue.Condition', 'dialogue.Node'],
+    ['dialogue.Condition', 'dialogue.GetRandom'],
+    ['dialogue.Condition', 'dialogue.Condition'],
+    ['dialogue.Condition', 'dialogue.Call'],
+    ['dialogue.Condition', 'dialogue.Branch'],
+    ['dialogue.Condition', 'dialogue.Set'],
+    ['dialogue.Condition', 'dialogue.Choice'],
+    ['dialogue.Condition', 'dialogue.End'],
+    // Call
     ['dialogue.Call', 'dialogue.Text'],
     ['dialogue.Call', 'dialogue.Node'],
     ['dialogue.Call', 'dialogue.GetRandom'],
     ['dialogue.Call', 'dialogue.Set'],
+    ['dialogue.Call', 'dialogue.Condition'],
     ['dialogue.Call', 'dialogue.Call'],
     ['dialogue.Call', 'dialogue.Branch'],
+    ['dialogue.Call', 'dialogue.End'],
+    // Branch
     ['dialogue.Branch', 'dialogue.Text'],
     ['dialogue.Branch', 'dialogue.Node'],
     ['dialogue.Branch', 'dialogue.GetRandom'],
     ['dialogue.Branch', 'dialogue.Set'],
+    ['dialogue.Branch', 'dialogue.Condition'],
     ['dialogue.Branch', 'dialogue.Call'],
-    ['dialogue.Branch', 'dialogue.Branch']
+    ['dialogue.Branch', 'dialogue.Branch'],
+    ['dialogue.Branch', 'dialogue.End'],
+    // Start
+    ['dialogue.Start', 'dialogue.Text'],
+    ['dialogue.Start', 'dialogue.Node'],
+    ['dialogue.Start', 'dialogue.Choice'],
+    ['dialogue.Start', 'dialogue.Set'],
+    ['dialogue.Start', 'dialogue.Condition'],
+    ['dialogue.Start', 'dialogue.Call'],
+    ['dialogue.Start', 'dialogue.Branch'],
+    ['dialogue.Start', 'dialogue.GetRandom'],
+    ['dialogue.Start', 'dialogue.End'],
 ];
 
 function validateConnection(cellViewS, magnetS, cellViewT, magnetT) {
@@ -140,7 +179,7 @@ joint.shapes.dialogue.Node = joint.shapes.devs.Model.extend({
             inPorts: ['input'],
             outPorts: ['output'],
             attrs: {
-                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.GetRandom', 'dialogue.Condition'] }
             }
         },
         joint.shapes.dialogue.Base.prototype.defaults
@@ -153,7 +192,7 @@ joint.shapes.dialogue.GetRandom = joint.shapes.devs.Model.extend({
             inPorts: ['input'],
             outPorts: ['output', 'output1', 'output2', 'output3', 'output4', 'output5'],
             attrs: {
-                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.GetRandom', 'dialogue.Condition'] }
             }
         },
         joint.shapes.dialogue.Base.prototype.defaults
@@ -166,8 +205,18 @@ joint.shapes.dialogue.DialogStart = joint.shapes.devs.Model.extend({
             inPorts: [],
             outPorts: ['output'],
             attrs: {
-                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.GetRandom', 'dialogue.Condition'] }
             }
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.DialogEnd = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement({
+            type: 'dialogue.End',
+            inPorts: ['input'],
+            outPorts: []
         },
         joint.shapes.dialogue.Base.prototype.defaults
     )
@@ -180,7 +229,7 @@ joint.shapes.dialogue.Text = joint.shapes.devs.Model.extend({
             outPorts: ['output'],
             actor: '',
             attrs: {
-                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.GetRandom', 'dialogue.Condition'] }
             }
         },
         joint.shapes.dialogue.Base.prototype.defaults
@@ -229,6 +278,19 @@ joint.shapes.dialogue.Call = joint.shapes.devs.Model.extend({
             inPorts: ['input'],
             outPorts: ['output'],
             parameters: []
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.Condition = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement({
+            type: 'dialogue.Condition',
+            inPorts: ['input'],
+            outPorts: ['output'],
+            attrs: {
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.GetRandom', 'dialogue.Condition'] }
+            }
         },
         joint.shapes.dialogue.Base.prototype.defaults
     )
@@ -324,7 +386,45 @@ joint.shapes.dialogue.NodeView = joint.shapes.dialogue.BaseView;
 
 joint.shapes.dialogue.GetRandomView = joint.shapes.dialogue.BaseView;
 
-joint.shapes.dialogue.StartView = joint.shapes.dialogue.BaseView;
+joint.shapes.dialogue.StartView = joint.shapes.dialogue.BaseView.extend({
+    template: [
+        '<div class="node">',
+        '    <span class="label"></span>',
+        '</div>'
+    ].join(''),
+
+    initialize: function() {
+        joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
+    },
+
+    updateBox: function() {
+        joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
+    },
+
+    updateSize: function() {
+        this.model.set('size', { width: widgetWidth, height: 128 + Math.max(0, (this.model.get('parameters').length - 1) * 32) });
+    }
+});
+
+joint.shapes.dialogue.EndView = joint.shapes.dialogue.BaseView.extend({
+    template: [
+        '<div class="node">',
+        '    <span class="label"></span>',
+        '</div>'
+    ].join(''),
+
+    initialize: function() {
+        joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
+    },
+
+    updateBox: function() {
+        joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
+    },
+
+    updateSize: function() {
+        this.model.set('size', { width: widgetWidth, height: 128 + Math.max(0, (this.model.get('parameters').length - 1) * 32) });
+    }
+});
 
 joint.shapes.dialogue.TextView = joint.shapes.dialogue.BaseView;
 
@@ -792,6 +892,7 @@ function add(constructor) {
 function clear() {
     graph.clear();
     add(joint.shapes.dialogue.DialogStart)();
+    add(joint.shapes.dialogue.DialogEnd)();
     filename = null;
 }
 
@@ -963,8 +1064,11 @@ paperElement.contextmenu({
         { text: 'Set', alias: '3-5', action: add(joint.shapes.dialogue.Set) },
         { text: 'Call', alias: '3-6', action: add(joint.shapes.dialogue.Call) },
         { text: 'Node', alias: '3-7', action: add(joint.shapes.dialogue.Node) },
+        { text: 'Condition', alias: '3-8', action: add(joint.shapes.dialogue.Condition) },
     ]
 });
+
+clear();
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
 if (loadOnStart != null) {
