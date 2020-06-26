@@ -620,6 +620,37 @@ joint.shapes.dialogue.SetView = joint.shapes.dialogue.BaseView.extend({
     }
 });
 
+joint.shapes.dialogue.ConditionView = joint.shapes.dialogue.BaseView.extend({
+    template: [
+        '<div class="node">',
+        '<span class="label"></span>',
+        '<button class="delete">x</button>',
+        '<input type="text" class="context" placeholder="Context" />',
+        '<input type="text" class="name" placeholder="Property" />',
+        '<input type="text" class="value" placeholder="Value" />',
+        '</div>'
+    ].join(''),
+
+    initialize: function() {
+        joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
+        this.$box.find('input.context').on('change', _.bind(function(evt) {
+            this.model.set('context', $(evt.target).val());
+        }, this));
+        this.$box.find('input.value').on('change', _.bind(function(evt) {
+            this.model.set('value', $(evt.target).val());
+        }, this));
+    },
+
+    updateBox: function() {
+        joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
+        var field = this.$box.find('input.value');
+        if (!field.is(':focus')) {
+            field.val(this.model.get('value'));
+        }
+    }
+});
+
+
 joint.shapes.dialogue.CallView = joint.shapes.dialogue.BaseView.extend({
     template: [
         '<div class="node">',
@@ -739,6 +770,11 @@ function gameData() {
                 node.method = cell1.method;
                 node.parameters = cell1.parameters;
                 node.next = null;
+            } else if (node.type == 'Condition') {
+                node.context = cell1.context;
+                node.variable = cell1.name;
+                node.value = cell1.value;
+                node.next = null;
             } else if (node.type == 'Choice') {
                 node.name = cell1.name;
                 node.title = cell1.title;
@@ -776,7 +812,8 @@ function gameData() {
                         key: value,
                         value: target ? target.id : null
                     });
-                } else if ((source.type == 'Text' || source.type == 'Node') && target && target.type == 'Choice') {
+                } else if ((source.type == 'Text' || source.type == 'Node') && target &&
+                    (target.type == 'Choice' || target.type == 'Condition' || target.type == 'GetRandom')) {
                     if (!source.choices) {
                         source.choices = [];
                         delete source.next;
