@@ -1,5 +1,13 @@
-# Adjusted for Samosbor
+# Adjusted for custom dialog
 
+## Can be visited [here](https://kitakun.github.io/Talkit/)
+ 
+___
+
+Thank to talkit for this solution
+
+___
+ 
 # Talkit
 Web Based, Non-Linear Game Dialogue Editor.
 #

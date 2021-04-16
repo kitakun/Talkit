@@ -405,6 +405,19 @@ joint.shapes.dialogue.StartView = joint.shapes.dialogue.BaseView.extend({
         this.model.set('size', { width: widgetWidth, height: 128 + Math.max(0, (this.model.get('parameters').length - 1) * 32) });
     }
 });
+joint.shapes.dialogue.Start = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement({
+            type: 'dialogue.Start',
+            inPorts: [],
+            outPorts: ['output'],
+            actor: '',
+            attrs: {
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.GetRandom', 'dialogue.Condition'] }
+            }
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
 
 joint.shapes.dialogue.EndView = joint.shapes.dialogue.BaseView.extend({
     template: [
@@ -424,6 +437,19 @@ joint.shapes.dialogue.EndView = joint.shapes.dialogue.BaseView.extend({
     updateSize: function() {
         this.model.set('size', { width: widgetWidth, height: 128 + Math.max(0, (this.model.get('parameters').length - 1) * 32) });
     }
+});
+joint.shapes.dialogue.End = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement({
+            type: 'dialogue.End',
+            inPorts: ['input'],
+            outPorts: [],
+            actor: '',
+            attrs: {
+
+            }
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
 });
 
 joint.shapes.dialogue.TextView = joint.shapes.dialogue.BaseView;
